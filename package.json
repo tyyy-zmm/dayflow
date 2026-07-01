@@ -1,0 +1,12 @@
+{
+  "name": "dayflow-todo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A friendly planning app with a lightweight Node backend.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node --check server.js && node --check public/app.js && node --check public/api.js && node --check public/date.js && node --check public/taskView.mjs",
+    "test": "node --test test/taskView.test.mjs"
+  }
+}

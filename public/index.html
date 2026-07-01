@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dayflow Todo</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">D</div>
+        <div>
+          <h1>Dayflow</h1>
+          <div class="date-line" id="todayLabel"></div>
+        </div>
+      </div>
+
+      <div class="week-switcher">
+        <button class="icon-action" id="prevWeekBtn" title="上一周">‹</button>
+        <button class="week-jump" id="thisWeekBtn">本周</button>
+        <button class="icon-action" id="nextWeekBtn" title="下一周">›</button>
+      </div>
+
+      <label class="jump-date">
+        跳转到日期
+        <input id="jumpDateInput" type="date">
+      </label>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <strong id="statWeekOpen">0</strong>
+          <span>本周待办</span>
+        </div>
+        <div class="stat">
+          <strong id="statWeekDone">0</strong>
+          <span>本周完成</span>
+        </div>
+        <div class="stat">
+          <strong id="statHigh">0</strong>
+          <span>高优先级</span>
+        </div>
+        <div class="stat">
+          <strong id="statMinutes">0m</strong>
+          <span>本周计划</span>
+        </div>
+      </div>
+
+      <div class="mini-panel">
+        <div class="mini-title">任务抽屉</div>
+        <button class="filter-row" id="inboxBtn">
+          未安排任务
+          <span id="countBacklog">0</span>
+        </button>
+        <button class="filter-row" id="doneBtn">
+          已完成
+          <span id="countDone">0</span>
+        </button>
+      </div>
+
+      <details class="mini-panel utility-panel">
+        <summary class="mini-title">工具</summary>
+        <button class="filter-row" id="densityBtn">
+          显示密度
+          <span id="densityLabel">紧凑</span>
+        </button>
+        <button class="filter-row" id="exportBtn">
+          导出数据
+          <span>JSON</span>
+        </button>
+        <label class="import-row">
+          导入数据
+          <input id="importInput" type="file" accept="application/json">
+        </label>
+      </details>
+    </aside>
+
+    <main>
+      <section class="week-hero">
+        <div>
+          <div class="kicker" id="weekKicker">本周计划</div>
+          <h2 id="weekTitle">整理这一周的节奏</h2>
+          <p id="weekCopy">把任务放进具体的日子里，一周会更有组织感。</p>
+        </div>
+        <div class="progress-card">
+          <span>本周完成度</span>
+          <strong id="progressText">0%</strong>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="topbar">
+        <div class="quick-capture">
+          <input class="search" id="quickTitleInput" type="text" maxlength="90" placeholder="快速记一条想法，先放进收件箱">
+          <button class="primary" id="quickInboxBtn" type="button">收下</button>
+        </div>
+        <input class="search" id="searchInput" type="search" placeholder="搜索任务、备注或标签">
+        <select class="filter-select" id="statusFilter">
+          <option value="all">全部状态</option>
+          <option value="open">未完成</option>
+          <option value="done">已完成</option>
+          <option value="high">高优先级</option>
+        </select>
+        <input class="tag-filter" id="tagFilter" type="search" placeholder="筛选标签">
+        <button class="primary" id="newTaskBtn">新增任务</button>
+      </div>
+
+      <div class="workspace">
+        <section class="week-board panel">
+          <div class="week-goal">
+            <label>
+              这周最重要的是
+              <input id="weekGoalInput" maxlength="120" placeholder="写下这周的主线目标">
+            </label>
+          </div>
+          <button class="week-header" id="weekToggleBtn">
+            <span>
+              <strong id="weekRangeTitle">本周</strong>
+              <small id="weekRangeMeta">7 天计划</small>
+            </span>
+            <span id="weekToggleIcon">⌄</span>
+          </button>
+          <div class="day-list" id="dayList"></div>
+        </section>
+
+        <aside class="right-rail">
+          <section class="panel focus-panel">
+            <p class="muted">当前焦点</p>
+            <h2 class="focus-task" id="focusTask">暂无任务</h2>
+            <button class="ghost" id="finishFocusBtn">完成当前</button>
+          </section>
+
+          <form class="panel task-editor" id="taskForm">
+            <div class="editor-head">
+              <h2 id="formTitle">新增任务</h2>
+              <button class="text-button" type="button" id="cancelEditBtn">清空</button>
+            </div>
+            <label>
+              标题
+              <input class="field" id="titleInput" required maxlength="90" placeholder="例如：完成一个小而确定的进展">
+            </label>
+            <label>
+              备注
+              <textarea id="noteInput" maxlength="300" placeholder="补充上下文、下一步或验收标准"></textarea>
+            </label>
+            <div class="form-grid">
+              <label>
+                日期
+                <input class="field" id="dateInput" type="date">
+              </label>
+              <label>
+                开始时间
+                <input class="field" id="startTimeInput" type="time">
+              </label>
+              <label>
+                优先级
+                <select id="priorityInput">
+                  <option value="medium">中</option>
+                  <option value="high">高</option>
+                  <option value="low">低</option>
+                </select>
+              </label>
+              <label>
+                结束时间
+                <input class="field" id="endTimeInput" type="time">
+              </label>
+              <label>
+                重复
+                <select id="repeatInput">
+                  <option value="none">不重复</option>
+                  <option value="daily">每天，连续 7 天</option>
+                  <option value="weekly">每周，连续 4 周</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              标签
+              <input class="field" id="tagInput" maxlength="40" placeholder="工作 / 生活 / 学习 / 灵感">
+            </label>
+            <button class="primary" type="submit" id="submitBtn">保存任务</button>
+          </form>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="drawer" id="drawer" hidden>
+    <div class="drawer-head">
+      <div>
+        <p class="muted" id="drawerKicker">任务</p>
+        <h2 id="drawerTitle">收件箱</h2>
+      </div>
+      <button class="icon-action" id="drawerCloseBtn" title="关闭">×</button>
+    </div>
+    <div class="drawer-list" id="drawerList"></div>
+  </aside>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
